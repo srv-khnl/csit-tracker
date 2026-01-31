@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSIT Study Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-center">
+                <h1>CSIT Study Tracker</h1>
+                <p>Track your study progress</p>
+            </div>
+        </header>
+
+        <!-- Stats Overview - YOUR THREE MAIN STATS ARE HERE -->
+        <div class="stats-overview">
+            <div class="stat-card stat-card--completed">
+                <div class="stat-card__value" id="completedPercent">0%</div>
+                <div class="stat-card__label">Overall Progress</div>
+                <div class="stat-card__subtitle">Percentage completed</div>
+            </div>
+            
+            <div class="stat-card stat-card--total">
+                <div class="stat-card__value" id="totalHours">0</div>
+                <div class="stat-card__label">Total Study Hours</div>
+                <div class="stat-card__subtitle">All subjects combined</div>
+            </div>
+            
+            <div class="stat-card stat-card--left">
+                <div class="stat-card__value" id="hoursLeft">0</div>
+                <div class="stat-card__label">Hours Remaining</div>
+                <div class="stat-card__subtitle">To complete all units</div>
+            </div>
+        </div>
+
+        <div class="countdown-links-wrapper">
+            <div class="countdown">
+                <div class="countdown-header">
+                    <h2>Days until exams</h2>
+                    <button class="sound-toggle" id="soundToggle" title="Toggle sound">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+                <div class="timer">
+                    <div class="timer-card timer-card--days">
+                        <span id="days">00</span>
+                        <div class="label">Days</div>
+                    </div>
+                    <div class="timer-card timer-card--hours">
+                        <span id="hours">00</span>
+                        <div class="label">Hours</div>
+                    </div>
+                    <div class="timer-card timer-card--minutes">
+                        <span id="minutes">00</span>
+                        <div class="label">Minutes</div>
+                    </div>
+                    <div class="timer-card timer-card--seconds">
+                        <span id="seconds">00</span>
+                        <div class="label">Seconds</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="links">
+                <a href="https://pomofocus.io" target="_blank" class="link-card">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <div class="link-text">Pomodoro Timer</div>
+                        <div class="link-desc">Stay Focused</div>
+                    </div>
+                </a>
+                <a href="https://hamrocsit.com" target="_blank" class="link-card">
+                    <i class="fas fa-book"></i>
+                    <div>
+                        <div class="link-text">Hamro CSIT</div>
+                        <div class="link-desc">Study Resources</div>
+                    </div>
+                </a>
+                <a href="https://easycsit.com" target="_blank" class="link-card">
+                    <i class="fas fa-laptop-code"></i>
+                    <div>
+                        <div class="link-text">Easy CSIT</div>
+                        <div class="link-desc">Watch Lectures</div>
+                    </div>
+                </a>
+                <a href="https://drive.google.com/drive/u/0/folders/1Upd81GUyoEky-eg4Do8mf5v6j47jCgk5" target="_blank" class="link-card">
+                    <i class="fas fa-folder-open"></i>
+                    <div>
+                        <div class="link-text">Subject Notes</div>
+                        <div class="link-desc">Google Drive</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="subject-selector">
+            <select id="subject-select">
+                <option value="">Select a subject to track...</option>
+            </select>
+        </div>
+
+        <div id="subject-container"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
