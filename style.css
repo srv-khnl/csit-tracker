@@ -750,3 +750,36 @@
                 width: 100%;
             }
         }
+
+        /* FOOTER */
+        .footer {
+            margin-top: var(--space-xxl);
+            padding: var(--space-xl);
+            border-top: 1px solid var(--bg-quaternary);
+            text-align: center;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+        }
+
+        .footer p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: var(--space-sm) 0;
+            letter-spacing: -0.2px;
+        }
+
+        .footer strong {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .footer-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .footer-link:hover {
+            color: #0066cc;
+            text-decoration: underline;
+        }
