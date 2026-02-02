@@ -45,6 +45,9 @@
                         <i class="fas fa-volume-up"></i>
                     </button>
                 </div>
+                <div class="countdown-inputs">
+                    <input type="date" id="exam-date" title="Exam Date">
+                </div>
                 <div class="timer">
                     <div class="timer-card timer-card--days">
                         <span id="days">00</span>
@@ -98,6 +101,10 @@
         </div>
 
         <div class="subject-selector">
+            <div class="backlog-option">
+                <input type="checkbox" id="no-backlog" onchange="toggleBacklogOption()">
+                <label for="no-backlog">I've no backlog (1st Semester)</label>
+            </div>
             <select id="subject-select">
                 <option value="">Select a subject to track...</option>
             </select>

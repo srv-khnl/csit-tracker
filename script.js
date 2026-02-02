@@ -145,7 +145,20 @@ function playTickSound() {
 }
 
 function updateCountdown() {
-    const examDate = new Date('April 6, 2026 09:00:00').getTime();
+    // Get exam date from input field
+    const dateInput = document.getElementById('exam-date')?.value;
+    
+    if (!dateInput) {
+        // Show default message if date not set
+        document.getElementById('days').textContent = '--';
+        document.getElementById('hours').textContent = '--';
+        document.getElementById('minutes').textContent = '--';
+        document.getElementById('seconds').textContent = '--';
+        return;
+    }
+    
+    // Set time to 12pm (midday) automatically
+    const examDate = new Date(`${dateInput}T12:00:00`).getTime();
     const now = new Date().getTime();
     const diff = examDate - now;
 
@@ -188,8 +201,15 @@ function saveProgress(progress) {
 // Subject Selector
 function initSubjectSelector() {
     const select = document.getElementById('subject-select');
+    const noBacklogCheckbox = document.getElementById('no-backlog');
+    const showFirstSemester = !noBacklogCheckbox.checked;
     
     for (const [semester, semesterSubjects] of Object.entries(subjects)) {
+        // Skip 1st Semester if user has no backlog
+        if (semester === "1st Semester" && !showFirstSemester) {
+            continue;
+        }
+        
         const optgroup = document.createElement('optgroup');
         optgroup.label = semester;
         
@@ -215,6 +235,14 @@ function initSubjectSelector() {
     });
 }
 
+function toggleBacklogOption() {
+    const select = document.getElementById('subject-select');
+    select.innerHTML = '<option value="">Select a subject to track...</option>';
+    document.getElementById('subject-container').innerHTML = '';
+    initSubjectSelector();
+    updateOverallStats();
+}
+
 function renderSubject(semester, subjectIndex) {
     const subject = subjects[semester][subjectIndex];
     const progress = getProgress();
@@ -231,6 +259,27 @@ function renderSubject(semester, subjectIndex) {
 
     const percentage = totalHours > 0 ? Math.round((completedHours / totalHours) * 100) : 0;
 
+    // Check if all units are completed
+    const allChecked = subject.units.every((unit, idx) => unitsProgress[idx]);
+    
+    // Calculate vibrant color based on percentage (red to yellow to green gradient)
+    let fillColor;
+    if (percentage <= 50) {
+        // Red to Yellow (0% - 50%)
+        const intensity = percentage / 50;
+        const red = Math.round(255 - (intensity * 50));
+        const green = Math.round(200 * intensity);
+        const blue = 0;
+        fillColor = `rgb(${red}, ${green}, ${blue})`;
+    } else {
+        // Yellow to Green (50% - 100%)
+        const intensity = (percentage - 50) / 50;
+        const red = Math.round(255 - (intensity * 200));
+        const green = Math.round(200 + (intensity * 55));
+        const blue = 0;
+        fillColor = `rgb(${red}, ${green}, ${blue})`;
+    }
+    
     const html = `
         <div class="subject-card">
             <div class="subject-header">
@@ -243,10 +292,15 @@ function renderSubject(semester, subjectIndex) {
                 </div>
                 <div style="flex-grow: 1; max-width: 300px;">
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${percentage}%"></div>
+                        <div class="progress-fill" style="width: ${percentage}%; background: ${fillColor};"></div>
                     </div>
                     <div class="progress-text">${completedHours}/${totalHours} hours (${percentage}%)</div>
                 </div>
+            </div>
+            
+            <div class="subject-actions">
+                <input type="checkbox" id="check-all-${subjectIndex}" class="check-all-checkbox" ${allChecked ? 'checked' : ''} onchange="toggleAllUnits('${semester}', ${subjectIndex})">
+                <label for="check-all-${subjectIndex}" style="cursor: pointer; margin: 0;">Check All</label>
             </div>
             
             <ul class="unit-list">
@@ -274,17 +328,63 @@ function toggleUnit(semester, subjectIndex, unitIndex, hours) {
     
     if (!progress[key]) progress[key] = {};
     
-    // If unticking, ask for confirmation
-    if (progress[key][unitIndex]) {
-        const confirmed = confirm(`Are you sure you want to uncheck this unit?\n\n"${document.querySelector(`#unit-${unitIndex}`).nextElementSibling?.textContent || 'Unit'}"`);
-        if (!confirmed) return;
-    }
-    
     progress[key][unitIndex] = !progress[key][unitIndex];
     
     saveProgress(progress);
     renderSubject(semester, subjectIndex);
     updateOverallStats();
+}
+
+function checkAllUnits(semester, subjectIndex) {
+    const subject = subjects[semester][subjectIndex];
+    const progress = getProgress();
+    const key = `${semester}_${subjectIndex}`;
+    
+    if (!progress[key]) progress[key] = {};
+    
+    subject.units.forEach((unit, idx) => {
+        progress[key][idx] = true;
+    });
+    
+    saveProgress(progress);
+    renderSubject(semester, subjectIndex);
+    updateOverallStats();
+}
+
+function uncheckAllUnits(semester, subjectIndex) {
+    const subject = subjects[semester][subjectIndex];
+    const progress = getProgress();
+    const key = `${semester}_${subjectIndex}`;
+    
+    if (!progress[key]) progress[key] = {};
+    
+    subject.units.forEach((unit, idx) => {
+        progress[key][idx] = false;
+    });
+    
+    saveProgress(progress);
+    renderSubject(semester, subjectIndex);
+    updateOverallStats();
+}
+
+function toggleAllUnits(semester, subjectIndex) {
+    // Use setTimeout to ensure the checkbox state is updated
+    setTimeout(() => {
+        const subject = subjects[semester][subjectIndex];
+        const progress = getProgress();
+        const key = `${semester}_${subjectIndex}`;
+        const checkbox = document.getElementById(`check-all-${subjectIndex}`);
+        
+        if (!progress[key]) progress[key] = {};
+        
+        subject.units.forEach((unit, idx) => {
+            progress[key][idx] = checkbox.checked;
+        });
+        
+        saveProgress(progress);
+        renderSubject(semester, subjectIndex);
+        updateOverallStats();
+    }, 0);
 }
 
 
@@ -314,6 +414,38 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Sound toggle button not found!');
     }
 
+    // Load saved exam date
+    const savedDate = localStorage.getItem('csit_exam_date');
+    
+    const dateInput = document.getElementById('exam-date');
+    
+    if (dateInput && savedDate) {
+        dateInput.value = savedDate;
+    }
+
+    // Save exam date on change
+    if (dateInput) {
+        dateInput.addEventListener('change', function() {
+            localStorage.setItem('csit_exam_date', this.value);
+            updateCountdown();
+        });
+    }
+
+    // Load saved backlog preference
+    const noBacklogCheckbox = document.getElementById('no-backlog');
+    const savedNoBacklog = localStorage.getItem('csit_no_backlog') === 'true';
+    if (noBacklogCheckbox) {
+        noBacklogCheckbox.checked = savedNoBacklog;
+    }
+
+    // Save backlog preference on change
+    if (noBacklogCheckbox) {
+        noBacklogCheckbox.addEventListener('change', function() {
+            localStorage.setItem('csit_no_backlog', String(this.checked));
+            toggleBacklogOption();
+        });
+    }
+
     updateCountdown();
     setInterval(updateCountdown, 1000); // Update every second for tick sound
     initSubjectSelector();
@@ -324,8 +456,15 @@ function calculateOverallStats() {
     const progress = getProgress();
     let totalAllHours = 0;
     let completedAllHours = 0;
+    const noBacklogCheckbox = document.getElementById('no-backlog');
+    const onlyThirdSemester = noBacklogCheckbox && noBacklogCheckbox.checked;
 
     for (const [semester, semesterSubjects] of Object.entries(subjects)) {
+        // If no backlog is checked, only count 3rd Semester
+        if (onlyThirdSemester && semester !== "3rd Semester") {
+            continue;
+        }
+
         semesterSubjects.forEach((subject, subjectIndex) => {
             const key = `${semester}_${subjectIndex}`;
             const unitsProgress = progress[key] || {};

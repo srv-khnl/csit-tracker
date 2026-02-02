@@ -210,6 +210,29 @@
             letter-spacing: -0.3px;
         }
 
+        .countdown-inputs {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            flex-wrap: wrap;
+        }
+
+        .countdown-inputs input {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--bg-quaternary);
+            border: 1px solid var(--bg-quaternary);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            transition: all var(--transition-fast);
+        }
+
+        .countdown-inputs input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+        }
+
         .timer {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -376,6 +399,29 @@
             border: 1px solid var(--bg-quaternary);
         }
 
+        .backlog-option {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--bg-quaternary);
+        }
+
+        .backlog-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-blue);
+        }
+
+        .backlog-option label {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-primary);
+            user-select: none;
+        }
+
         select {
             width: 100%;
             padding: var(--space-md);
@@ -408,6 +454,15 @@
             padding: var(--space-xl);
             border: 1px solid var(--bg-quaternary);
             animation: fadeIn 0.3s ease;
+        }
+
+        .subject-card--disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .subject-card--disabled .unit-checkbox {
+            cursor: not-allowed;
         }
 
         @keyframes fadeIn {
@@ -459,6 +514,26 @@
             color: var(--text-secondary);
             font-size: 0.9rem;
             margin-top: var(--space-sm);
+        }
+
+        .subject-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin: var(--space-lg) 0;
+        }
+
+        .check-all-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent-blue);
+        }
+
+        .subject-actions label {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-primary);
         }
 
         .unit-list {
